@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f6fa"><meta name="description" content="在二维坐标系中拖动输入向量，实时观察矩阵变换后的向量和运动轨迹。"><title>参数管理 · TwoDimensional</title><link rel="icon" href="/assets/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/app.css"></head>
+<body>
+<header class="app-header"><a class="brand" href="/"><img src="/assets/icon.svg" width="34" height="34" alt=""><span>TwoDimensional<small>二维矩阵变换</small></span></a><div class="header-actions"><div id="connection" class="connection" data-mode="waiting" role="status"><i></i><span>正在连接</span></div><a class="button primary-link" href="/" target="_blank" rel="noopener">打开主页面 <span aria-hidden="true">↗</span></a></div></header>
+<main class="admin-layout">
+  <aside class="admin-sidebar">
+    <div class="page-intro"><span class="eyebrow">CONTROL PANEL</span><h1>参数管理</h1><p>修改自动保存，主页面实时同步。</p></div>
+    <section class="card admin-matrix" aria-labelledby="matrix-title">
+      <div class="section-label"><h2 id="matrix-title">变换矩阵</h2><span class="math-letter">A</span></div>
+      <div class="matrix-center"><div class="matrix-brackets matrix-inputs">
+        <input type="text" inputmode="decimal" autocomplete="off" data-coef="0,0" aria-label="矩阵第 1 行第 1 列" value="1" disabled>
+        <input type="text" inputmode="decimal" autocomplete="off" data-coef="0,1" aria-label="矩阵第 1 行第 2 列" value="0.5" disabled>
+        <input type="text" inputmode="decimal" autocomplete="off" data-coef="1,0" aria-label="矩阵第 2 行第 1 列" value="0" disabled>
+        <input type="text" inputmode="decimal" autocomplete="off" data-coef="1,1" aria-label="矩阵第 2 行第 2 列" value="1" disabled>
+      </div></div>
+      <div class="presets" aria-label="矩阵示例">
+        <button type="button" data-preset="identity" disabled>单位</button>
+        <button type="button" data-preset="rotation" disabled>旋转 90°</button>
+        <button type="button" data-preset="scale" disabled>放大 2 倍</button>
+        <button type="button" data-preset="shear" disabled>剪切</button>
+      </div>
+      <p class="field-note">支持整数、小数与分数，例如 1/2。</p>
+    </section>
+    <section class="admin-vectors" aria-labelledby="vector-title">
+      <div class="section-label"><h2 id="vector-title">输入向量</h2><span id="vector-count" class="count-badge">1</span></div>
+      <div id="vector-editor" class="vector-editor"></div>
+      <button id="add-vector" class="button add-vector" type="button" disabled><span aria-hidden="true">+</span> 添加输入向量</button>
+    </section>
+    <section class="card view-settings" aria-labelledby="view-title">
+      <div class="section-label"><h2 id="view-title">显示设置</h2></div>
+      <label class="toggle-row"><span>显示网格</span><input id="show-grid" type="checkbox" role="switch" checked disabled></label>
+      <label class="toggle-row"><span>显示变换轨迹</span><input id="show-trails" type="checkbox" role="switch" checked disabled></label>
+      <button class="button clear-trails" data-clear-trails type="button" disabled>清空移动轨迹</button>
+      <p class="field-note">修改矩阵后，轨迹会重新记录。<br>坐标范围在画布右下角手动调整。</p>
+    </section>
+  </aside>
+<section class="stage" aria-label="向量变换画布"><canvas id="plot"></canvas><div class="stage-top"><span class="stage-caption">实时预览</span><div class="plot-legend"><span><i class="legend-line"></i>输入</span><span><i class="legend-line output-line"></i>变换结果</span></div></div><div id="overflow-note" class="overflow-note" hidden>有向量超出当前范围</div><div class="stage-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3 9 10-5 1-2 5-2-16Z"/></svg>拖住实心箭头移动</div><div class="coordinate-control"><label for="range">坐标范围</label><div class="range-field"><button id="range-minus" type="button" aria-label="缩小坐标范围" disabled>−</button><span aria-hidden="true">±</span><input id="range" type="text" inputmode="decimal" autocomplete="off" value="6" aria-label="坐标轴正负范围" disabled><button id="range-plus" type="button" aria-label="扩大坐标范围" disabled>+</button></div></div></section></main><div id="toast" class="toast" role="alert" hidden></div><script type="module" src="/js/admin.mjs"></script>
+</body></html>

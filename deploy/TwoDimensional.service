@@ -1,0 +1,19 @@
+[Unit]
+Description=TwoDimensional matrix visualization
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/TwoDimensional
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3005
+ExecStart=/usr/bin/node /opt/TwoDimensional/server.mjs
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

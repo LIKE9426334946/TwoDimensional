@@ -1,0 +1,16 @@
+{
+  "name": "twodimensional",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "二维矩阵变换与向量轨迹可视化",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node --test",
+    "verify": "npm run check && npm test"
+  }
+}
