@@ -10,6 +10,34 @@ test('coordinates preserve equal x/y units and convert in both directions', () =
   assert.ok(Math.abs(restored.y - point.y) < 1e-12);
   assert.ok(Math.abs((toScreen({ x: 1, y: 0 }, view).x - view.cx) - (view.cy - toScreen({ x: 0, y: 1 }, view).y)) < 1e-10);
 });
+test('wide canvases expose the unused horizontal space without stretching units', () => {
+  const view = viewport(1200, 800, 6);
+  assert.equal(view.left, 44);
+  assert.equal(view.right, 1156);
+  assert.equal(view.plotWidth, 1112);
+  assert.equal(view.plotHeight, 712);
+  assert.equal(view.yRange, 6);
+  assert.ok(view.xRange > 9);
+  assert.equal(view.range, 6);
+  const vector = { id: 'expanded', x: 9, y: 2 };
+  const triangle = arrowTriangle(toScreen({ x: 0, y: 0 }, view), toScreen(vector, view));
+  const center = { x: triangle.reduce((sum, p) => sum + p.x / 3, 0), y: triangle.reduce((sum, p) => sum + p.y / 3, 0) };
+  assert.equal(hitInputArrow(center, [vector], view)?.id, vector.id);
+  assert.deepEqual(dragPoint(toScreen(vector, view), { x: 0, y: 0 }, view), { x: 9, y: 2 });
+});
+test('portrait canvases extend the y axis while keeping the manual x range', () => {
+  const view = viewport(700, 1000, 6);
+  assert.equal(view.xRange, 6);
+  assert.ok(view.yRange > 8);
+  assert.deepEqual(dragPoint(toScreen({ x: 2, y: 8 }, view), { x: 0, y: 0 }, view), { x: 2, y: 8 });
+});
+test('drag limits follow each visible axis in a rectangular plot', () => {
+  const view = viewport(1200, 800, 6);
+  const dragged = dragPoint({ x: 10000, y: -10000 }, { x: 0, y: 0 }, view);
+  assert.equal(dragged.x, view.xRange);
+  assert.equal(dragged.y, 6);
+  assert.equal(view.range, 6);
+});
 test('only the actual input arrow triangle is draggable, not its shaft or background', () => {
   const view = viewport(800, 800, 6);
   const vector = { id: 'v1', x: 3, y: 0 };

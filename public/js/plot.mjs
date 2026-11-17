@@ -57,6 +57,7 @@ export class Plot {
     this.canvas.width = Math.round(this.width * ratio);
     this.canvas.height = Math.round(this.height * ratio);
     this.ratio = ratio;
+    this.canvas.dispatchEvent(new CustomEvent('viewportchange'));
     this.requestDraw();
   }
   get view() { return viewport(this.width, this.height, this.state.view.range); }
@@ -105,24 +106,35 @@ export class Plot {
   }
   drawGrid(context, view) {
     context.fillStyle = '#ffffff';
-    context.fillRect(view.left, view.top, view.size, view.size);
+    context.fillRect(view.left, view.top, view.plotWidth, view.plotHeight);
     const step = gridStep(view.range);
-    const count = Math.floor(view.range / step + 0.00001);
+    const xCount = Math.floor(view.xRange / step + 0.00001);
+    const yCount = Math.floor(view.yRange / step + 0.00001);
     context.font = '11px ui-monospace, SFMono-Regular, Consolas, monospace';
     context.textAlign = 'center'; context.textBaseline = 'middle';
-    for (let index = -count; index <= count; index++) {
+    for (let index = -xCount; index <= xCount; index++) {
       const value = index * step;
       if (Math.abs(value) < 0.000001) continue;
       const position = toScreen({ x: value, y: value }, view);
       if (this.state.view.showGrid) {
         context.beginPath(); context.strokeStyle = '#edf0f4'; context.lineWidth = 1;
-        context.moveTo(position.x, view.top); context.lineTo(position.x, view.bottom);
-        context.moveTo(view.left, position.y); context.lineTo(view.right, position.y); context.stroke();
+        context.moveTo(position.x, view.top); context.lineTo(position.x, view.bottom); context.stroke();
       }
       context.fillStyle = '#9aa2b2';
       context.fillText(format(value), position.x, view.cy + 18);
-      context.textAlign = 'right'; context.fillText(format(value), view.cx - 12, position.y); context.textAlign = 'center';
     }
+    for (let index = -yCount; index <= yCount; index++) {
+      const value = index * step;
+      if (Math.abs(value) < 0.000001) continue;
+      const position = toScreen({ x: 0, y: value }, view);
+      if (this.state.view.showGrid) {
+        context.beginPath(); context.strokeStyle = '#edf0f4'; context.lineWidth = 1;
+        context.moveTo(view.left, position.y); context.lineTo(view.right, position.y); context.stroke();
+      }
+      context.fillStyle = '#9aa2b2'; context.textAlign = 'right';
+      context.fillText(format(value), view.cx - 12, position.y);
+    }
+    context.textAlign = 'center';
     context.beginPath(); context.strokeStyle = '#b8c0cf'; context.lineWidth = 1.15;
     context.moveTo(view.left, view.cy); context.lineTo(view.right + 9, view.cy);
     context.moveTo(view.cx, view.bottom); context.lineTo(view.cx, view.top - 9); context.stroke();
@@ -137,7 +149,7 @@ export class Plot {
     context.font = '11px ui-monospace, SFMono-Regular, Consolas, monospace';
     context.fillText('0', view.cx - 12, view.cy + 17);
     context.strokeStyle = '#e7ebf1'; context.lineWidth = 1;
-    context.strokeRect(view.left, view.top, view.size, view.size);
+    context.strokeRect(view.left, view.top, view.plotWidth, view.plotHeight);
   }
   drawArrow(context, vector, output, view) {
     const value = output ? transform(this.state.matrix, vector) : vector;
@@ -173,7 +185,7 @@ export class Plot {
     context.clearRect(0, 0, this.width, this.height);
     this.drawGrid(context, view);
     context.save();
-    context.beginPath(); context.rect(view.left, view.top, view.size, view.size); context.clip();
+    context.beginPath(); context.rect(view.left, view.top, view.plotWidth, view.plotHeight); context.clip();
     if (this.state.view.showTrails) {
       for (const vector of this.state.vectors) {
         const points = this.histories.get(vector.id) || [];
@@ -193,6 +205,6 @@ export class Plot {
     context.beginPath(); context.arc(view.cx, view.cy, 3, 0, Math.PI * 2);
     context.fillStyle = '#7f899b'; context.fill();
     context.restore();
-    this.canvas.setAttribute('aria-label', '二维坐标系，范围正负 ' + format(view.range) + '，共 ' + this.state.vectors.length + ' 个输入向量。仅输入向量的实心箭头可拖动。');
+    this.canvas.setAttribute('aria-label', '二维坐标系，x 轴正负 ' + format(view.xRange) + '，y 轴正负 ' + format(view.yRange) + '，共 ' + this.state.vectors.length + ' 个输入向量。仅输入向量的实心箭头可拖动。');
   }
 }

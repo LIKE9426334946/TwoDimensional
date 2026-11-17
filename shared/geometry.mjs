@@ -1,9 +1,16 @@
 // Geometry is shared by drawing, pointer hit testing, and automated checks.
 export function viewport(width, height, range) {
-  const size = Math.max(1, Math.min(width - 88, height - 88));
-  const left = (width - size) / 2;
-  const top = (height - size) / 2;
-  return { width, height, size, left, top, right: left + size, bottom: top + size, cx: width / 2, cy: height / 2, scale: size / (2 * range), range };
+  const plotWidth = Math.max(1, width - 88);
+  const plotHeight = Math.max(1, height - 88);
+  const left = (width - plotWidth) / 2;
+  const top = (height - plotHeight) / 2;
+  const scale = Math.min(plotWidth, plotHeight) / (2 * range);
+  return {
+    width, height, plotWidth, plotHeight, left, top,
+    right: left + plotWidth, bottom: top + plotHeight,
+    cx: width / 2, cy: height / 2, scale, range,
+    xRange: plotWidth / (2 * scale), yRange: plotHeight / (2 * scale),
+  };
 }
 export function toScreen(point, view) { return { x: view.cx + point.x * view.scale, y: view.cy - point.y * view.scale }; }
 export function toWorld(point, view) { return { x: (point.x - view.cx) / view.scale, y: (view.cy - point.y) / view.scale }; }
@@ -39,8 +46,8 @@ export function hitInputArrow(point, vectors, view, selectedId) {
 }
 export function dragPoint(pointer, offset, view) {
   const world = toWorld({ x: pointer.x + offset.x, y: pointer.y + offset.y }, view);
-  const bounded = (value) => Math.round(Math.max(-view.range, Math.min(view.range, value)) * 10000) / 10000;
-  return { x: bounded(world.x), y: bounded(world.y) };
+  const bounded = (value, limit) => Math.max(-limit, Math.min(limit, Math.round(value * 10000) / 10000));
+  return { x: bounded(world.x, view.xRange), y: bounded(world.y, view.yRange) };
 }
 export function gridStep(range) {
   const raw = (2 * range) / 12;

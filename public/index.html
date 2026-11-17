@@ -6,13 +6,6 @@
 <main class="display-layout">
   <aside class="readout">
     <div class="page-intro"><span class="eyebrow">LINEAR TRANSFORMATION</span><h1>看见向量的变换</h1><p>每一次移动，都有一个对应的结果。</p></div>
-    <section class="card matrix-readout" aria-labelledby="matrix-title">
-      <div class="section-label"><h2 id="matrix-title">变换矩阵</h2><span class="math-letter">A</span></div>
-      <div class="matrix-center"><div class="matrix-brackets matrix-values" aria-label="当前变换矩阵">
-        <span data-coef="0,0">1</span><span data-coef="0,1">0.5</span><span data-coef="1,0">0</span><span data-coef="1,1">1</span>
-      </div></div>
-      <div class="matrix-foot"><span>det(A)</span><span id="det-value">1</span></div>
-    </section>
     <section class="vector-readout-section" aria-labelledby="vector-title">
       <div class="section-label"><h2 id="vector-title">输入与输出</h2><span id="vector-count" class="count-badge">1</span></div>
       <div id="vector-readout" class="vector-readout"></div>
@@ -20,5 +13,13 @@
     </section>
     <div class="readout-footer"><div class="formula"><i>y</i><span>=</span><i>A</i><i>v</i></div><p>实线是输入，虚线是变换结果。<br>淡色曲线记录变换结果的移动轨迹。</p></div>
   </aside>
-<section class="stage" aria-label="向量变换画布"><canvas id="plot"></canvas><div class="stage-top"><span class="stage-caption">二维坐标空间</span><div class="plot-legend"><span><i class="legend-line"></i>输入</span><span><i class="legend-line output-line"></i>变换结果</span></div></div><div id="overflow-note" class="overflow-note" hidden>有向量超出当前范围</div><div class="stage-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3 9 10-5 1-2 5-2-16Z"/></svg>拖住实心箭头移动</div><div class="coordinate-control"><label for="range">坐标范围</label><div class="range-field"><button id="range-minus" type="button" aria-label="缩小坐标范围" disabled>−</button><span aria-hidden="true">±</span><input id="range" type="text" inputmode="decimal" autocomplete="off" value="6" aria-label="坐标轴正负范围" disabled><button id="range-plus" type="button" aria-label="扩大坐标范围" disabled>+</button></div></div></section></main><div id="toast" class="toast" role="alert" hidden></div><script type="module" src="/js/display.mjs"></script>
+<section class="stage" aria-label="向量变换画布"><canvas id="plot"></canvas>
+<section class="card stage-matrix" aria-labelledby="stage-matrix-title">
+      <div class="section-label"><h2 id="stage-matrix-title">变换矩阵</h2><span class="math-letter">A</span></div>
+      <div class="matrix-center"><div class="matrix-brackets matrix-values" aria-label="当前变换矩阵">
+        <span data-coef="0,0">1</span><span data-coef="0,1">0.5</span><span data-coef="1,0">0</span><span data-coef="1,1">1</span>
+      </div></div>
+      <div class="matrix-foot"><span>det(A)</span><span id="det-value">1</span></div>
+    </section>
+<div class="stage-top"><span class="stage-caption">二维坐标空间</span><div class="plot-legend"><span><i class="legend-line"></i>输入</span><span><i class="legend-line output-line"></i>变换结果</span></div></div><div id="overflow-note" class="overflow-note" hidden>有向量超出当前范围</div><div class="stage-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3 9 10-5 1-2 5-2-16Z"/></svg>拖住实心箭头移动</div><div class="coordinate-control"><label for="range">坐标范围</label><div class="range-field"><button id="range-minus" type="button" aria-label="缩小坐标范围" disabled>−</button><span aria-hidden="true">±</span><input id="range" type="text" inputmode="decimal" autocomplete="off" value="6" aria-label="较短坐标轴的正负范围" aria-describedby="visible-range" disabled><button id="range-plus" type="button" aria-label="扩大坐标范围" disabled>+</button></div><p id="visible-range" class="visible-range" aria-live="polite">x ±6 · y ±6</p></div></section></main><div id="toast" class="toast" role="alert" hidden></div><script type="module" src="/js/display.mjs"></script>
 </body></html>

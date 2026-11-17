@@ -139,14 +139,21 @@ export function bindCommon(store, plot) {
     message.hidden = false;
     toastTimer = setTimeout(() => { message.hidden = true; }, 5500);
   });
-  store.subscribe((state) => {
+  const updateRange = () => {
+    const state = store.state;
     if (document.activeElement !== range) range.value = String(state.view.range);
+    const view = plot.view;
+    const visibleRange = document.getElementById('visible-range');
+    if (visibleRange) visibleRange.textContent = 'x ±' + format(view.xRange, 2) + ' · y ±' + format(view.yRange, 2);
     const outside = state.vectors.some((vector) => {
       const output = transform(state.matrix, vector);
-      return Math.max(Math.abs(vector.x), Math.abs(vector.y), Math.abs(output.x), Math.abs(output.y)) > state.view.range;
+      return Math.abs(vector.x) > view.xRange || Math.abs(vector.y) > view.yRange ||
+        Math.abs(output.x) > view.xRange || Math.abs(output.y) > view.yRange;
     });
     document.getElementById('overflow-note').hidden = !outside;
-  });
+  };
+  store.subscribe(updateRange);
+  plot.canvas.addEventListener('viewportchange', updateRange);
   const applyRange = () => {
     try {
       const number = parseScalar(range.value);
