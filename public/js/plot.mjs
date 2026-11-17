@@ -1,5 +1,5 @@
-import { colors, format, transform } from '/shared/model.mjs';
-import { arrowTriangle, dragPoint, gridStep, hitInputArrow, insidePlot, toScreen, viewport } from '/shared/geometry.mjs';
+import { colors, format, transform } from '../../shared/model.mjs';
+import { arrowTriangle, dragPoint, gridStep, hitInputArrow, insidePlot, matrixGeometry, toScreen, viewport } from '../../shared/geometry.mjs';
 
 const name = (vector, output = false) => (output ? 'Av' : 'v') + String(vector.number).replace(/\d/g, (digit) => '₀₁₂₃₄₅₆₇₈₉'[Number(digit)]);
 export class Plot {
@@ -151,6 +151,57 @@ export class Plot {
     context.strokeStyle = '#e7ebf1'; context.lineWidth = 1;
     context.strokeRect(view.left, view.top, view.plotWidth, view.plotHeight);
   }
+  drawMatrixFrame(context, view) {
+    const geometry = matrixGeometry(this.state.matrix);
+    const origin = toScreen({ x: 0, y: 0 }, view);
+    const polygon = (points) => {
+      context.beginPath();
+      points.forEach((point, index) => {
+        const pixel = toScreen(point, view);
+        if (index === 0) context.moveTo(pixel.x, pixel.y);
+        else context.lineTo(pixel.x, pixel.y);
+      });
+      context.closePath();
+    };
+    context.save();
+    // The dashed unit square is a fixed reference, independent of input vectors.
+    polygon(geometry.unitSquare);
+    context.strokeStyle = '#91a8b5'; context.lineWidth = 1.6;
+    context.globalAlpha = 0.65; context.setLineDash([5, 5]); context.stroke();
+
+    polygon(geometry.parallelogram);
+    context.setLineDash([]); context.globalAlpha = 0.13;
+    context.fillStyle = '#5b9f7b'; context.fill();
+    context.globalAlpha = 0.65; context.strokeStyle = '#5b9f7b';
+    context.lineWidth = 1.8; context.stroke();
+    context.globalAlpha = 1;
+
+    geometry.basis.forEach((vector, index) => {
+      const tip = toScreen(vector, view);
+      const color = index === 0 ? '#5a9d75' : '#3e8d79';
+      const pixelLength = Math.hypot(tip.x - origin.x, tip.y - origin.y);
+      const zero = vector.x === 0 && vector.y === 0;
+      context.strokeStyle = color; context.fillStyle = color; context.lineWidth = 2.6;
+      if (!zero) {
+        context.beginPath(); context.moveTo(origin.x, origin.y); context.lineTo(tip.x, tip.y); context.stroke();
+        const headLength = Math.min(12, pixelLength * 0.7);
+        const triangle = arrowTriangle(origin, tip, headLength, headLength * 5.5 / 12);
+        context.beginPath(); context.moveTo(triangle[0].x, triangle[0].y);
+        context.lineTo(triangle[1].x, triangle[1].y); context.lineTo(triangle[2].x, triangle[2].y);
+        context.closePath(); context.fill();
+      }
+      if (insidePlot(tip, view)) {
+        const text = (index === 0 ? 'Ae₁' : 'Ae₂') + (zero ? ' = 0' : '');
+        context.font = '600 12px system-ui, sans-serif';
+        context.textAlign = 'left'; context.textBaseline = 'middle';
+        const x = Math.min(view.right - context.measureText(text).width - 5, Math.max(view.left + 5, tip.x + 11));
+        const y = Math.min(view.bottom - 10, Math.max(view.top + 10, tip.y + (index === 0 ? -17 : 18)));
+        context.strokeStyle = '#fff'; context.lineWidth = 4; context.lineJoin = 'round';
+        context.strokeText(text, x, y); context.fillStyle = color; context.fillText(text, x, y);
+      }
+    });
+    context.restore();
+  }
   drawArrow(context, vector, output, view) {
     const value = output ? transform(this.state.matrix, vector) : vector;
     const origin = toScreen({ x: 0, y: 0 }, view);
@@ -186,6 +237,7 @@ export class Plot {
     this.drawGrid(context, view);
     context.save();
     context.beginPath(); context.rect(view.left, view.top, view.plotWidth, view.plotHeight); context.clip();
+    this.drawMatrixFrame(context, view);
     if (this.state.view.showTrails) {
       for (const vector of this.state.vectors) {
         const points = this.histories.get(vector.id) || [];
@@ -205,6 +257,6 @@ export class Plot {
     context.beginPath(); context.arc(view.cx, view.cy, 3, 0, Math.PI * 2);
     context.fillStyle = '#7f899b'; context.fill();
     context.restore();
-    this.canvas.setAttribute('aria-label', '二维坐标系，x 轴正负 ' + format(view.xRange) + '，y 轴正负 ' + format(view.yRange) + '，共 ' + this.state.vectors.length + ' 个输入向量。仅输入向量的实心箭头可拖动。');
+    this.canvas.setAttribute('aria-label', '二维坐标系，x 轴正负 ' + format(view.xRange) + '，y 轴正负 ' + format(view.yRange) + '，共 ' + this.state.vectors.length + ' 个输入向量。绿色 Ae₁、Ae₂ 表示矩阵的两列，绿色区域是变换后的单位正方形。仅输入向量箭头可拖动。');
   }
 }

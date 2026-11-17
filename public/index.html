@@ -11,7 +11,7 @@
       <div id="vector-readout" class="vector-readout"></div>
       <p id="empty-state" class="empty-state" hidden>还没有输入向量<br>前往管理页添加一个向量</p>
     </section>
-    <div class="readout-footer"><div class="formula"><i>y</i><span>=</span><i>A</i><i>v</i></div><p>实线是输入，虚线是变换结果。<br>淡色曲线记录变换结果的移动轨迹。</p></div>
+    <div class="readout-footer"><div class="formula"><i>y</i><span>=</span><i>A</i><i>v</i></div><p>实线是输入，虚线是变换结果。<br>淡色曲线记录变换结果的移动轨迹。<br>绿色箭头表示矩阵的两列，<br>绿色区域为变换后的单位正方形。</p></div>
   </aside>
 <section class="stage" aria-label="向量变换画布"><canvas id="plot"></canvas>
 <section class="card stage-matrix" aria-labelledby="stage-matrix-title">
@@ -21,5 +21,5 @@
       </div></div>
       <div class="matrix-foot"><span>det(A)</span><span id="det-value">1</span></div>
     </section>
-<div class="stage-top"><span class="stage-caption">二维坐标空间</span><div class="plot-legend"><span><i class="legend-line"></i>输入</span><span><i class="legend-line output-line"></i>变换结果</span></div></div><div id="overflow-note" class="overflow-note" hidden>有向量超出当前范围</div><div class="stage-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3 9 10-5 1-2 5-2-16Z"/></svg>拖住实心箭头移动</div><div class="coordinate-control"><label for="range">坐标范围</label><div class="range-field"><button id="range-minus" type="button" aria-label="缩小坐标范围" disabled>−</button><span aria-hidden="true">±</span><input id="range" type="text" inputmode="decimal" autocomplete="off" value="6" aria-label="较短坐标轴的正负范围" aria-describedby="visible-range" disabled><button id="range-plus" type="button" aria-label="扩大坐标范围" disabled>+</button></div><p id="visible-range" class="visible-range" aria-live="polite">x ±6 · y ±6</p></div></section></main><div id="toast" class="toast" role="alert" hidden></div><script type="module" src="/js/display.mjs"></script>
+<div class="stage-top"><span class="stage-caption">二维坐标空间</span><div class="plot-legend"><span><i class="legend-line"></i>输入</span><span><i class="legend-line output-line"></i>变换结果</span><span><i class="legend-line basis-line"></i>矩阵列向量</span></div></div><div id="overflow-note" class="overflow-note" hidden>有向量或区域超出当前范围</div><div class="stage-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3 9 10-5 1-2 5-2-16Z"/></svg>拖动输入向量箭头</div><div class="coordinate-control"><label for="range">坐标范围</label><div class="range-field"><button id="range-minus" type="button" aria-label="缩小坐标范围" disabled>−</button><span aria-hidden="true">±</span><input id="range" type="text" inputmode="decimal" autocomplete="off" value="6" aria-label="较短坐标轴的正负范围" aria-describedby="visible-range" disabled><button id="range-plus" type="button" aria-label="扩大坐标范围" disabled>+</button></div><p id="visible-range" class="visible-range" aria-live="polite">x ±6 · y ±6</p></div></section></main><div id="toast" class="toast" role="alert" hidden></div><script type="module" src="/js/display.mjs"></script>
 </body></html>

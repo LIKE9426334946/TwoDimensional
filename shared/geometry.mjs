@@ -1,4 +1,13 @@
 // Geometry is shared by drawing, pointer hit testing, and automated checks.
+export function matrixGeometry(matrix) {
+  const first = { x: matrix[0][0], y: matrix[1][0] };
+  const second = { x: matrix[0][1], y: matrix[1][1] };
+  return {
+    basis: [first, second],
+    unitSquare: [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }],
+    parallelogram: [{ x: 0, y: 0 }, first, { x: first.x + second.x, y: first.y + second.y }, second],
+  };
+}
 export function viewport(width, height, range) {
   const plotWidth = Math.max(1, width - 88);
   const plotHeight = Math.max(1, height - 88);

@@ -1,4 +1,5 @@
 import { applyOperations, coalesce, defaultState, format, MAX_RANGE, MIN_RANGE, parseScalar, transform, validateState } from '/shared/model.mjs';
+import { matrixGeometry } from '/shared/geometry.mjs';
 
 export const uid = () => globalThis.crypto?.randomUUID?.() || ('c' + Date.now().toString(36) + Math.random().toString(36).slice(2));
 export const vectorName = (vector, output = false) => (output ? 'Av' : 'v') + String(vector.number).replace(/\d/g, (digit) => '₀₁₂₃₄₅₆₇₈₉'[Number(digit)]);
@@ -145,11 +146,12 @@ export function bindCommon(store, plot) {
     const view = plot.view;
     const visibleRange = document.getElementById('visible-range');
     if (visibleRange) visibleRange.textContent = 'x ±' + format(view.xRange, 2) + ' · y ±' + format(view.yRange, 2);
-    const outside = state.vectors.some((vector) => {
-      const output = transform(state.matrix, vector);
-      return Math.abs(vector.x) > view.xRange || Math.abs(vector.y) > view.yRange ||
-        Math.abs(output.x) > view.xRange || Math.abs(output.y) > view.yRange;
-    });
+    const geometry = matrixGeometry(state.matrix);
+    const visiblePoints = [
+      ...geometry.unitSquare, ...geometry.parallelogram,
+      ...state.vectors, ...state.vectors.map((vector) => transform(state.matrix, vector)),
+    ];
+    const outside = visiblePoints.some((point) => Math.abs(point.x) > view.xRange || Math.abs(point.y) > view.yRange);
     document.getElementById('overflow-note').hidden = !outside;
   };
   store.subscribe(updateRange);

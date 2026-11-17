@@ -12,3 +12,5 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 
 @media(max-width:700px){.stage .stage-matrix{left:13px;top:48px;width:146px;padding:12px}.stage-matrix .matrix-values{width:116px;min-height:58px;gap:10px;padding:4px 10px}.stage-matrix .matrix-values span{font-size:13px}.stage-matrix .matrix-center{padding-bottom:9px}.stage-matrix .matrix-foot{padding-top:7px;font-size:9px}.visible-range{font-size:8px}}
+
+.basis-line{border-top-color:#5a9d75}.stage-matrix [data-coef="0,0"],.stage-matrix [data-coef="1,0"]{color:#5a9d75}.stage-matrix [data-coef="0,1"],.stage-matrix [data-coef="1,1"]{color:#3e8d79}.plot-legend{flex-wrap:wrap;justify-content:flex-end}

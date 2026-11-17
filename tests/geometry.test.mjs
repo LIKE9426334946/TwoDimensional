@@ -1,6 +1,29 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { arrowTriangle, dragPoint, gridStep, hitInputArrow, pointInTriangle, toScreen, toWorld, viewport } from '../shared/geometry.mjs';
+import { arrowTriangle, dragPoint, gridStep, hitInputArrow, matrixGeometry, pointInTriangle, toScreen, toWorld, viewport } from '../shared/geometry.mjs';
+
+test('matrix vectors use columns and their sum closes the transformed unit square', () => {
+  const matrix = [[2, 3], [1, 4]];
+  const geometry = matrixGeometry(matrix);
+  assert.deepEqual(geometry.basis, [{ x: 2, y: 1 }, { x: 3, y: 4 }]);
+  assert.deepEqual(geometry.parallelogram, [{ x: 0, y: 0 }, { x: 2, y: 1 }, { x: 5, y: 5 }, { x: 3, y: 4 }]);
+  assert.deepEqual(geometry.unitSquare, [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }]);
+  assert.deepEqual(matrix, [[2, 3], [1, 4]]);
+});
+test('matrix region has the correct signed area for rotation, reflection and singular maps', () => {
+  const signedArea = (points) => points.reduce((sum, point, index) => {
+    const next = points[(index + 1) % points.length];
+    return sum + point.x * next.y - point.y * next.x;
+  }, 0) / 2;
+  for (const [matrix, area] of [
+    [[[0, -1], [1, 0]], 1], [[[-2, 1], [1, 3]], -7],
+    [[[1, 2], [2, 4]], 0], [[[0, 0], [0, 0]], 0],
+  ]) {
+    const geometry = matrixGeometry(matrix);
+    assert.equal(signedArea(geometry.parallelogram), area);
+    assert.ok(geometry.parallelogram.every((point) => Number.isFinite(point.x) && Number.isFinite(point.y)));
+  }
+});
 
 test('coordinates preserve equal x/y units and convert in both directions', () => {
   const view = viewport(1200, 800, 6);
